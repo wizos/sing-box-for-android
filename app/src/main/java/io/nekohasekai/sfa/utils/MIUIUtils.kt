@@ -27,5 +27,4 @@ object MIUIUtils {
         intent.putExtra("extra_pkgname", context.packageName)
         context.startActivity(intent)
     }
-
 }

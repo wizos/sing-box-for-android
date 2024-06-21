@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile
 import io.nekohasekai.libbox.Libbox
+import io.nekohasekai.sfa.BuildConfig
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.databinding.ActivityVpnScanBinding
 import io.nekohasekai.sfa.databinding.ViewVpnAppItemBinding
@@ -215,7 +216,7 @@ class VPNScanActivity : AbstractActivity<ActivityVpnScanBinding>() {
                     }
                     for (sfaClass in sfaClasses) {
                         if (clazzName.contains(sfaClass)) {
-                            return "sing-box"
+                            return BuildConfig.applicationName
                         }
                     }
                     for (legacySagerNetClass in legacySagerNetClasses) {

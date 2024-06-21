@@ -19,7 +19,7 @@ import io.nekohasekai.libbox.CommandServerHandler
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.libbox.PlatformInterface
 import io.nekohasekai.libbox.SystemProxyStatus
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.constant.Action
 import io.nekohasekai.sfa.constant.Alert
@@ -46,11 +46,11 @@ class BoxService(
         private var initializeOnce = false
         private fun initialize() {
             if (initializeOnce) return
-            val baseDir = Application.application.filesDir
+            val baseDir = App.instance.filesDir
             baseDir.mkdirs()
-            val workingDir = Application.application.getExternalFilesDir(null) ?: return
+            val workingDir = App.instance.getExternalFilesDir(null) ?: return
             workingDir.mkdirs()
-            val tempDir = Application.application.cacheDir
+            val tempDir = App.instance.cacheDir
             tempDir.mkdirs()
             Libbox.setup(baseDir.path, workingDir.path, tempDir.path, false)
             Libbox.redirectStderr(File(workingDir, "stderr.log").path)
@@ -61,24 +61,24 @@ class BoxService(
         fun start() {
             val intent = runBlocking {
                 withContext(Dispatchers.IO) {
-                    Intent(Application.application, Settings.serviceClass())
+                    Intent(App.instance, Settings.serviceClass())
                 }
             }
-            ContextCompat.startForegroundService(Application.application, intent)
+            ContextCompat.startForegroundService(App.instance, intent)
         }
 
         fun stop() {
-            Application.application.sendBroadcast(
+            App.instance.sendBroadcast(
                 Intent(Action.SERVICE_CLOSE).setPackage(
-                    Application.application.packageName
+                    App.instance.packageName
                 )
             )
         }
 
         fun reload() {
-            Application.application.sendBroadcast(
+            App.instance.sendBroadcast(
                 Intent(Action.SERVICE_RELOAD).setPackage(
-                    Application.application.packageName
+                    App.instance.packageName
                 )
             )
         }
@@ -237,7 +237,7 @@ class BoxService(
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun serviceUpdateIdleMode() {
-        if (Application.powerManager.isDeviceIdleMode) {
+        if (App.powerManager.isDeviceIdleMode) {
             boxService?.pause()
         } else {
             boxService?.wake()

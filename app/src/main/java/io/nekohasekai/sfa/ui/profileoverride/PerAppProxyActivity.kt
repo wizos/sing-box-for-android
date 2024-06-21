@@ -21,7 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.database.Settings
 import io.nekohasekai.sfa.databinding.ActivityPerAppProxyBinding
@@ -690,12 +690,12 @@ class PerAppProxyActivity : AbstractActivity<ActivityPerAppProxyBinding>() {
             }
             try {
                 val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    Application.packageManager.getPackageInfo(
+                    App.packageManager.getPackageInfo(
                         packageName,
                         PackageManager.PackageInfoFlags.of(packageManagerFlags.toLong())
                     )
                 } else {
-                    @Suppress("DEPRECATION") Application.packageManager.getPackageInfo(
+                    @Suppress("DEPRECATION") App.packageManager.getPackageInfo(
                         packageName, packageManagerFlags
                     )
                 }

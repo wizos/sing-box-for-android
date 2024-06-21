@@ -1,12 +1,12 @@
 package io.nekohasekai.sfa.ktx
 
 import android.content.ClipData
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 
 var clipboardText: String?
-    get() = Application.clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+    get() = App.clipboard.primaryClip?.getItemAt(0)?.text?.toString()
     set(plainText) {
         if (plainText != null) {
-            Application.clipboard.setPrimaryClip(ClipData.newPlainText(null, plainText))
+            App.clipboard.setPrimaryClip(ClipData.newPlainText(null, plainText))
         }
     }

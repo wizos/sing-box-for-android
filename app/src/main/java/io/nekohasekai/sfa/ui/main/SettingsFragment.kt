@@ -16,7 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import io.nekohasekai.libbox.Libbox
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.constant.EnabledType
 import io.nekohasekai.sfa.database.Settings
@@ -102,7 +102,7 @@ class SettingsFragment : Fragment() {
                 requestIgnoreBatteryOptimizations.launch(
                     Intent(
                         android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                        Uri.parse("package:${Application.application.packageName}")
+                        Uri.parse("package:${App.instance.packageName}")
                     )
                 )
             }
@@ -130,7 +130,7 @@ class SettingsFragment : Fragment() {
         )
         val checkUpdateEnabled = Settings.checkUpdateEnabled
         val removeBackgroundPermissionPage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Application.powerManager.isIgnoringBatteryOptimizations(Application.application.packageName)
+            App.powerManager.isIgnoringBatteryOptimizations(App.instance.packageName)
         } else {
             true
         }

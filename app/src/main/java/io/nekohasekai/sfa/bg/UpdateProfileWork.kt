@@ -9,7 +9,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import io.nekohasekai.libbox.Libbox
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.database.ProfileManager
 import io.nekohasekai.sfa.database.TypedProfile
 import io.nekohasekai.sfa.utils.HTTPClient
@@ -35,7 +35,7 @@ class UpdateProfileWork {
             val remoteProfiles = ProfileManager.list()
                 .filter { it.typed.type == TypedProfile.Type.Remote && it.typed.autoUpdate }
             if (remoteProfiles.isEmpty()) {
-                WorkManager.getInstance(Application.application).cancelUniqueWork(WORK_NAME)
+                WorkManager.getInstance(App.instance).cancelUniqueWork(WORK_NAME)
                 return
             }
 
@@ -45,7 +45,7 @@ class UpdateProfileWork {
             val minInitDelay =
                 remoteProfiles.minOf { (it.typed.autoUpdateInterval * 60) - (nowSeconds - (it.typed.lastUpdated.time / 1000L)) }
             if (minDelay < 15) minDelay = 15
-            WorkManager.getInstance(Application.application).enqueueUniquePeriodicWork(
+            WorkManager.getInstance(App.instance).enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
                 PeriodicWorkRequest.Builder(UpdateTask::class.java, minDelay, TimeUnit.MINUTES)

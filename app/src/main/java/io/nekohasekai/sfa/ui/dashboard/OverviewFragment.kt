@@ -71,7 +71,6 @@ class OverviewFragment : Fragment() {
                 Status.Stopped -> {
                     binding.clashModeCard.isVisible = false
                     binding.systemProxyCard.isVisible = false
-
                 }
 
                 Status.Started -> {

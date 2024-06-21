@@ -10,7 +10,7 @@ import io.nekohasekai.libbox.PlatformInterface
 import io.nekohasekai.libbox.StringIterator
 import io.nekohasekai.libbox.TunOptions
 import io.nekohasekai.libbox.WIFIState
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import java.net.Inet6Address
 import java.net.InetSocketAddress
 import java.net.InterfaceAddress
@@ -43,7 +43,7 @@ interface PlatformInterfaceWrapper : PlatformInterface {
         destinationAddress: String,
         destinationPort: Int
     ): Int {
-        val uid = Application.connectivity.getConnectionOwnerUid(
+        val uid = App.connectivity.getConnectionOwnerUid(
             ipProtocol,
             InetSocketAddress(sourceAddress, sourcePort),
             InetSocketAddress(destinationAddress, destinationPort)
@@ -53,7 +53,7 @@ interface PlatformInterfaceWrapper : PlatformInterface {
     }
 
     override fun packageNameByUid(uid: Int): String {
-        val packages = Application.packageManager.getPackagesForUid(uid)
+        val packages = App.packageManager.getPackagesForUid(uid)
         if (packages.isNullOrEmpty()) error("android: package not found")
         return packages[0]
     }
@@ -62,13 +62,13 @@ interface PlatformInterfaceWrapper : PlatformInterface {
     override fun uidByPackageName(packageName: String): Int {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Application.packageManager.getPackageUid(
+                App.packageManager.getPackageUid(
                     packageName, PackageManager.PackageInfoFlags.of(0)
                 )
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Application.packageManager.getPackageUid(packageName, 0)
+                App.packageManager.getPackageUid(packageName, 0)
             } else {
-                Application.packageManager.getApplicationInfo(packageName, 0).uid
+                App.packageManager.getApplicationInfo(packageName, 0).uid
             }
         } catch (e: PackageManager.NameNotFoundException) {
             error("android: package not found")
@@ -104,7 +104,7 @@ interface PlatformInterfaceWrapper : PlatformInterface {
 
     override fun readWIFIState(): WIFIState? {
         @Suppress("DEPRECATION")
-        val wifiInfo = Application.wifiManager.connectionInfo ?: return null
+        val wifiInfo = App.wifiManager.connectionInfo ?: return null
         var ssid = wifiInfo.ssid
         if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
             ssid = ssid.substring(1, ssid.length - 1)

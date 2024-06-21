@@ -7,6 +7,7 @@ import android.net.VpnService
 import android.os.Build
 import android.os.IBinder
 import io.nekohasekai.libbox.TunOptions
+import io.nekohasekai.sfa.BuildConfig
 import io.nekohasekai.sfa.database.Settings
 import io.nekohasekai.sfa.ktx.toIpPrefix
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +56,7 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
         if (prepare(this) != null) error("android: missing vpn permission")
 
         val builder = Builder()
-            .setSession("sing-box")
+            .setSession(BuildConfig.applicationName)
             .setMtu(options.mtu)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

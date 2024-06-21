@@ -15,12 +15,13 @@ import androidx.core.app.ServiceCompat
 import androidx.lifecycle.MutableLiveData
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.libbox.StatusMessage
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
+import io.nekohasekai.sfa.BuildConfig
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.constant.Action
 import io.nekohasekai.sfa.constant.Status
 import io.nekohasekai.sfa.database.Settings
-import io.nekohasekai.sfa.ui.MainActivity
+import io.mo.viaport.ui.AppActivity
 import io.nekohasekai.sfa.utils.CommandClient
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class ServiceNotification(
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 return true
             }
-            return Application.notification.areNotificationsEnabled()
+            return App.notification.areNotificationsEnabled()
         }
     }
 
@@ -51,7 +52,7 @@ class ServiceNotification(
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(service, notificationChannel).setShowWhen(false).setOngoing(true)
-            .setContentTitle("sing-box").setOnlyAlertOnce(true)
+            .setContentTitle(BuildConfig.applicationName).setOnlyAlertOnce(true)
             .setSmallIcon(R.drawable.ic_menu)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setContentIntent(
@@ -60,7 +61,7 @@ class ServiceNotification(
                     0,
                     Intent(
                         service,
-                        MainActivity::class.java
+                        AppActivity::class.java
                     ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                     flags
                 )
@@ -81,7 +82,7 @@ class ServiceNotification(
 
     fun show(lastProfileName: String, @StringRes contentTextId: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Application.notification.createNotificationChannel(
+            App.notification.createNotificationChannel(
                 NotificationChannel(
                     notificationChannel, "sing-box service", NotificationManager.IMPORTANCE_LOW
                 )
@@ -114,7 +115,7 @@ class ServiceNotification(
     override fun updateStatus(status: StatusMessage) {
         val content =
             Libbox.formatBytes(status.uplink) + "/s ↑\t" + Libbox.formatBytes(status.downlink) + "/s ↓"
-        Application.notificationManager.notify(
+        App.notificationManager.notify(
             notificationId,
             notificationBuilder.setContentText(content).build()
         )

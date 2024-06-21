@@ -28,7 +28,7 @@ import android.net.NetworkRequest
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -105,7 +105,7 @@ object DefaultNetworkListener {
     )
 
     suspend fun get() = if (fallback) @TargetApi(23) {
-        Application.connectivity.activeNetwork
+        App.connectivity.activeNetwork
             ?: error("missing default network") // failed to listen, return current if available
     } else NetworkMessage.Get().run {
         networkActor.send(this)
@@ -165,7 +165,7 @@ object DefaultNetworkListener {
     private fun register() {
         when (Build.VERSION.SDK_INT) {
             in 31..Int.MAX_VALUE -> @TargetApi(31) {
-                Application.connectivity.registerBestMatchingNetworkCallback(
+                App.connectivity.registerBestMatchingNetworkCallback(
                     request,
                     Callback,
                     mainHandler
@@ -173,20 +173,20 @@ object DefaultNetworkListener {
             }
 
             in 28 until 31 -> @TargetApi(28) {  // we want REQUEST here instead of LISTEN
-                Application.connectivity.requestNetwork(request, Callback, mainHandler)
+                App.connectivity.requestNetwork(request, Callback, mainHandler)
             }
 
             in 26 until 28 -> @TargetApi(26) {
-                Application.connectivity.registerDefaultNetworkCallback(Callback, mainHandler)
+                App.connectivity.registerDefaultNetworkCallback(Callback, mainHandler)
             }
 
             in 24 until 26 -> @TargetApi(24) {
-                Application.connectivity.registerDefaultNetworkCallback(Callback)
+                App.connectivity.registerDefaultNetworkCallback(Callback)
             }
 
             else -> try {
                 fallback = false
-                Application.connectivity.requestNetwork(request, Callback)
+                App.connectivity.requestNetwork(request, Callback)
             } catch (e: RuntimeException) {
                 fallback =
                     true     // known bug on API 23: https://stackoverflow.com/a/33509180/2245107
@@ -196,7 +196,7 @@ object DefaultNetworkListener {
 
     private fun unregister() {
         runCatching {
-            Application.connectivity.unregisterNetworkCallback(Callback)
+            App.connectivity.unregisterNetworkCallback(Callback)
         }
     }
 }

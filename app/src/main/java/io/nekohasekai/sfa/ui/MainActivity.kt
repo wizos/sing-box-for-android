@@ -29,7 +29,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.libbox.ProfileContent
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.bg.ServiceConnection
 import io.nekohasekai.sfa.bg.ServiceNotification
@@ -118,17 +118,17 @@ class MainActivity : AbstractActivity<ActivityMainBinding>(),
         pref: Preference
     ): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_activity_my)
-        when (pref.fragment) {
+        return when (pref.fragment) {
             CoreFragment::class.java.name -> {
                 navController.navigate(R.id.navigation_settings_core)
-                return true
+                true
             }
 
-            else -> return false
+            else -> false
         }
     }
 
-    override public fun onNewIntent(intent: Intent) {
+    public override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val uri = intent.data ?: return
         if (uri.scheme == "sing-box" && uri.host == "import-remote-profile") {
@@ -247,9 +247,9 @@ class MainActivity : AbstractActivity<ActivityMainBinding>(),
                     return@launch
                 }
             }
-            val intent = Intent(Application.application, Settings.serviceClass())
+            val intent = Intent(App.instance, Settings.serviceClass())
             withContext(Dispatchers.Main) {
-                ContextCompat.startForegroundService(Application.application, intent)
+                ContextCompat.startForegroundService(App.instance, intent)
             }
         }
     }

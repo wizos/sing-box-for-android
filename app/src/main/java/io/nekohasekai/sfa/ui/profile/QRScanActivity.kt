@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import io.nekohasekai.libbox.Libbox
+import io.nekohasekai.sfa.BuildConfig
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.databinding.ActivityQrScanBinding
 import io.nekohasekai.sfa.ktx.errorDialogBuilder
@@ -138,7 +139,7 @@ class QRScanActivity : AbstractActivity<ActivityQrScanBinding>() {
 
     private fun importRemoteProfileFromString(uriString: String) {
         val uri = Uri.parse(uriString)
-        if (uri.scheme != "sing-box" || uri.host != "import-remote-profile") error("Not a valid sing-box remote profile URI")
+        if (uri.scheme != BuildConfig.applicationName || uri.host != "import-remote-profile") error("Not a valid sing-box remote profile URI")
         Libbox.parseRemoteProfileImportLink(uri.toString())
         setResult(RESULT_OK, Intent().apply {
             setData(uri)

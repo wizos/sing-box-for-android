@@ -24,7 +24,7 @@ import io.nekohasekai.sfa.databinding.FragmentConfigurationBinding
 import io.nekohasekai.sfa.databinding.SheetAddProfileBinding
 import io.nekohasekai.sfa.databinding.ViewConfigutationItemBinding
 import io.nekohasekai.sfa.ktx.errorDialogBuilder
-import io.nekohasekai.sfa.ktx.shareProfile
+import io.nekohasekai.sfa.ktx.shareProfileToUri
 import io.nekohasekai.sfa.ktx.shareProfileURL
 import io.nekohasekai.sfa.ui.MainActivity
 import io.nekohasekai.sfa.ui.profile.EditProfileActivity
@@ -236,7 +236,7 @@ class ConfigurationFragment : Fragment() {
                         R.id.action_share -> {
                             adapter.scope.launch(Dispatchers.IO) {
                                 try {
-                                    button.context.shareProfile(profile)
+                                    button.context.shareProfileToUri(profile)
                                 } catch (e: Exception) {
                                     withContext(Dispatchers.Main) {
                                         button.context.errorDialogBuilder(e).show()

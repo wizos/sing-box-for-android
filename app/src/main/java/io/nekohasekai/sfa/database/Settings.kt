@@ -1,7 +1,7 @@
 package io.nekohasekai.sfa.database
 
 import androidx.room.Room
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.bg.ProxyService
 import io.nekohasekai.sfa.bg.VPNService
 import io.nekohasekai.sfa.constant.Path
@@ -24,9 +24,9 @@ object Settings {
 
     @OptIn(DelicateCoroutinesApi::class)
     private val instance by lazy {
-        Application.application.getDatabasePath(Path.SETTINGS_DATABASE_PATH).parentFile?.mkdirs()
+        App.instance.getDatabasePath(Path.SETTINGS_DATABASE_PATH).parentFile?.mkdirs()
         Room.databaseBuilder(
-            Application.application,
+            App.instance,
             KeyValueDatabase::class.java,
             Path.SETTINGS_DATABASE_PATH
         ).allowMainThreadQueries()

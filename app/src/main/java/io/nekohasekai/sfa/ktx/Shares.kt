@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun Context.shareProfile(profile: Profile) {
+suspend fun Context.shareProfileToUri(profile: Profile) {
     val content = ProfileContent()
     content.name = profile.name
     when (profile.typed.type) {

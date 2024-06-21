@@ -3,7 +3,7 @@ package io.nekohasekai.sfa.bg
 import android.net.Network
 import android.os.Build
 import io.nekohasekai.libbox.InterfaceUpdateListener
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import java.net.NetworkInterface
 
 object DefaultNetworkMonitor {
@@ -17,7 +17,7 @@ object DefaultNetworkMonitor {
             checkDefaultInterfaceUpdate(it)
         }
         defaultNetwork = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Application.connectivity.activeNetwork
+            App.connectivity.activeNetwork
         } else {
             DefaultNetworkListener.get()
         }
@@ -46,7 +46,7 @@ object DefaultNetworkMonitor {
         val listener = listener ?: return
         if (newNetwork != null) {
             val interfaceName =
-                (Application.connectivity.getLinkProperties(newNetwork) ?: return).interfaceName
+                (App.connectivity.getLinkProperties(newNetwork) ?: return).interfaceName
             for (times in 0 until 10) {
                 var interfaceIndex: Int
                 try {

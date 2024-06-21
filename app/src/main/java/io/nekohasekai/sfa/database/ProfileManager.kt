@@ -1,7 +1,7 @@
 package io.nekohasekai.sfa.database
 
 import androidx.room.Room
-import io.nekohasekai.sfa.Application
+import io.nekohasekai.sfa.App
 import io.nekohasekai.sfa.constant.Path
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -22,10 +22,10 @@ object ProfileManager {
 
     @OptIn(DelicateCoroutinesApi::class)
     private val instance by lazy {
-        Application.application.getDatabasePath(Path.PROFILES_DATABASE_PATH).parentFile?.mkdirs()
+        App.instance.getDatabasePath(Path.PROFILES_DATABASE_PATH).parentFile?.mkdirs()
         Room
             .databaseBuilder(
-                Application.application,
+                App.instance,
                 ProfileDatabase::class.java,
                 Path.PROFILES_DATABASE_PATH
             )
