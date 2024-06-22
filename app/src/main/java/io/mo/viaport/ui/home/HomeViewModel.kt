@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.elvishew.xlog.XLog
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import io.mo.viaport.helper.exceptionHandler
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.libbox.ProfileContent
 import io.nekohasekai.libbox.StatusMessage
@@ -102,35 +103,24 @@ class HomeViewModel: ViewModel() {
     private val _paused = MutableStateFlow(false)
     val paused = _paused.asStateFlow()
 
-    fun pauseLog(pause: Boolean){
+    fun receiveLog(pause: Boolean){
         _paused.value = pause
     }
-    fun onServiceWriteLog(context: Context, message: String?) {
-        // if (paused) {
-        //     if (logList.size > 300) {
-        //         logList.removeFirst()
-        //     }
-        // }
-        // _logList.value.addLast(message)
-        // if (!paused) {
-        //     logCallback?.invoke(false)
-        // }
-        if (paused.value) return
+    fun onServiceWriteLog(message: String?) = viewModelScope.launch {
+        if (paused.value) return@launch
         message?.let { msg ->
-            ioScope.launch {
-                // _logList.value.addLast(ColorUtils.ansiEscapeToSpannable(context, it))
-                // _logList.value.add(msg)
+            launch(Dispatchers.IO + exceptionHandler) {
                 _logList.update { it + msg }
             }
         }
     }
-    fun onServiceResetLogs(context: Context, messages: MutableList<String>) {
-        if (paused.value) return
-        ioScope.launch {
-            // _logList.value.clear()
-            // _logList.update { it + messages }
+    fun onServiceResetLogs(messages: MutableList<String>) = viewModelScope.launch{
+        if (paused.value) return@launch
+        launch(Dispatchers.IO + exceptionHandler) {
+            _logList.value = emptyList()
+            _logList.update { it + messages }
 
-            _logList.value.orEmpty().plus(messages)
+            // _logList.value.plus(messages)
 
             // _logList.value.addAll(messages)
             // messages.forEach{
@@ -147,7 +137,7 @@ class HomeViewModel: ViewModel() {
         _serviceStatus.value = status
     }
 
-    fun reload() {
+    fun reload() = viewModelScope.launch{
         ioScope.launch {
             ProfileManager.list().let { profiles ->
                 _items.value = profiles
@@ -380,6 +370,5 @@ class HomeViewModel: ViewModel() {
     //             adapter.notifyDataSetChanged()
     //         }
     //     }
-    //
     // }
 }
