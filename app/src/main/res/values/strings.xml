@@ -196,4 +196,9 @@
     <string name="settings_title_core">Core</string>
 
     <string name="add">Add</string>
+    <string name="paused">Paused</string>
+    <string name="resumed">Resumed</string>
+    <string name="home">Home</string>
+    <string name="log">Logs</string>
+    <string name="setting">Settings</string>
 </resources>

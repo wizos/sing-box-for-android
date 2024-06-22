@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,7 @@ import io.mo.viaport.ui.LocalActivity
 import io.mo.viaport.ui.Routor
 import io.mo.viaport.ui.home.HomeViewModel
 import io.mo.viaport.ui.toast
+import io.nekohasekai.sfa.R
 import kotlinx.coroutines.launch
 
 fun Routor.logsId() = "logs"
@@ -73,11 +75,11 @@ fun LogsScreen(homeViewModel: HomeViewModel) {
             .combinedClickable(
                 onClick = {
                     if (paused) {
-                        activity.toast("已恢复")
+                        activity.toast(R.string.resumed)
                     } else {
-                        activity.toast("已暂停")
+                        activity.toast(R.string.paused)
                     }
-                    homeViewModel.pauseLog(!paused)
+                    homeViewModel.receiveLog(!paused)
                 },
                 onDoubleClick = {
                     coroutineScope.launch {
@@ -88,7 +90,9 @@ fun LogsScreen(homeViewModel: HomeViewModel) {
         state = lazyListState
     ) {
         items(logs.size){index ->
-            Text(text = logs[index], modifier = Modifier.padding(2.dp))
+            SelectionContainer {
+                Text(text = logs[index], modifier = Modifier.padding(horizontal = 2.dp, vertical = 5.dp))
+            }
         }
     }
 

@@ -121,9 +121,9 @@ class AppActivity: BasalActivity(), ServiceConnection.Callback {
                     val navController = LocalNavController.current
 
                     val items = listOf(
-                        BottomNavItem("Home", Icons.Default.Home, Routor.homeId()),
-                        BottomNavItem("Logs", Icons.Default.BugReport, Routor.logsId()),
-                        BottomNavItem("Settings", Icons.Default.Navigation, Routor.settingsId())
+                        BottomNavItem(stringResource(id = R.string.home), Icons.Default.Home, Routor.homeId()),
+                        BottomNavItem(stringResource(id = R.string.log), Icons.Default.BugReport, Routor.logsId()),
+                        BottomNavItem(stringResource(id = R.string.setting), Icons.Default.Navigation, Routor.settingsId())
                     )
 
                     Scaffold(
@@ -137,7 +137,7 @@ class AppActivity: BasalActivity(), ServiceConnection.Callback {
                             val profiles by homeViewModel.profiles.collectAsStateWithLifecycle()
                             if (profiles.isNotEmpty()){
                                 val serviceStatus by homeViewModel.serviceStatus.collectAsStateWithLifecycle()
-                                var lastServiceStatus by remember { mutableStateOf(Status.Stopped) }
+                                // var lastServiceStatus by remember { mutableStateOf(Status.Stopped) }
                                 FloatingActionButton(
                                     onClick = {
                                         XLog.e("点击后开始启动服务：$serviceStatus")
@@ -550,7 +550,7 @@ class AppActivity: BasalActivity(), ServiceConnection.Callback {
     }
 
     override fun onServiceWriteLog(message: String?) {
-        homeViewModel.onServiceWriteLog(this, message)
+        homeViewModel.onServiceWriteLog(message)
         // if (paused) {
         //     if (logList.size > 300) {
         //         logList.removeFirst()
@@ -563,7 +563,7 @@ class AppActivity: BasalActivity(), ServiceConnection.Callback {
     }
 
     override fun onServiceResetLogs(messages: MutableList<String>) {
-        homeViewModel.onServiceResetLogs(this, messages)
+        homeViewModel.onServiceResetLogs(messages)
         // logList.clear()
         // logList.addAll(messages)
         // if (!paused) logCallback?.invoke(true)
