@@ -10,6 +10,7 @@ import io.nekohasekai.libbox.TunOptions
 import io.nekohasekai.sfa.BuildConfig
 import io.nekohasekai.sfa.database.Settings
 import io.nekohasekai.sfa.ktx.toIpPrefix
+import io.nekohasekai.sfa.ktx.toList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -84,7 +85,7 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
                     while (inet4RouteAddress.hasNext()) {
                         builder.addRoute(inet4RouteAddress.next().toIpPrefix())
                     }
-                } else {
+                } else if (options.inet4Address.hasNext()) {
                     builder.addRoute("0.0.0.0", 0)
                 }
 
@@ -93,7 +94,7 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
                     while (inet6RouteAddress.hasNext()) {
                         builder.addRoute(inet6RouteAddress.next().toIpPrefix())
                     }
-                } else {
+                } else if (options.inet6Address.hasNext()) {
                     builder.addRoute("::", 0)
                 }
 
@@ -170,7 +171,9 @@ class VPNService : VpnService(), PlatformInterfaceWrapper {
             systemProxyEnabled = Settings.systemProxyEnabled
             if (systemProxyEnabled) builder.setHttpProxy(
                 ProxyInfo.buildDirectProxy(
-                    options.httpProxyServer, options.httpProxyServerPort
+                    options.httpProxyServer,
+                    options.httpProxyServerPort,
+                    options.httpProxyBypassDomain.toList()
                 )
             )
         } else {
