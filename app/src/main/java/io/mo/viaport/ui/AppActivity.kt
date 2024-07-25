@@ -53,6 +53,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.elvishew.xlog.XLog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.mo.viaport.helper.exceptionHandler
+import io.mo.viaport.ktx.exclusiveFilesDir
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.libbox.ProfileContent
 import io.nekohasekai.sfa.App
@@ -319,7 +321,7 @@ class AppActivity: BasalActivity(), ServiceConnection.Callback {
 
     private fun startIntegration() {
         if (Vendor.checkUpdateAvailable()) {
-            lifecycleScope.launch(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
                 if (Settings.checkUpdateEnabled) {
                     Vendor.checkUpdate(this@AppActivity, false)
                 }

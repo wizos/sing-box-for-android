@@ -67,7 +67,7 @@
 
                 <data
                     android:host="import-remote-profile"
-                    android:scheme="${applicationName}" />
+                    android:scheme="sing-box" />
 
             </intent-filter>
 

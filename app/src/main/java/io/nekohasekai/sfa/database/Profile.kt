@@ -16,6 +16,7 @@ import kotlinx.parcelize.Parcelize
 @TypeConverters(TypedProfile.Convertor::class)
 @Parcelize
 class Profile(
+    // 主键
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var userOrder: Long = 0L,
     var name: String = "",

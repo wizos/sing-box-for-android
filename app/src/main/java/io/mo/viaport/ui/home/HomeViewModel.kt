@@ -1,5 +1,6 @@
 package io.mo.viaport.ui.home
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
@@ -137,35 +138,25 @@ class HomeViewModel: ViewModel() {
         _serviceStatus.value = status
     }
 
-    fun reload() = viewModelScope.launch{
-        ioScope.launch {
-            ProfileManager.list().let { profiles ->
-                _items.value = profiles
-                if (profiles.isNotEmpty()){
-                    selectedProfileID = Settings.selectedProfile
+    fun reload() = viewModelScope.launch(Dispatchers.IO + exceptionHandler){
+        ProfileManager.list().let { profiles ->
+            _items.value = profiles
+            if (profiles.isNotEmpty()){
+                selectedProfileID = Settings.selectedProfile
 
-                    // for ((index, profile) in profiles.withIndex()) {
-                    //     if (profile.id == selectedProfileID) {
-                    //         lastSelectedIndex = index
-                    //         break
-                    //     }
-                    // }
-                    // lastSelectedIndex == null ||
-
-                    profiles
-                        .indexOfFirst { it.id == selectedProfileID }
-                        .let {
-                            if (it == -1) {
-                                _lastSelectedIndex.value = 0
-                                selectedProfileID = profiles[0].id
-                                Settings.selectedProfile = selectedProfileID
-                            }else{
-                                _lastSelectedIndex.value = it
+                profiles
+                    .indexOfFirst { it.id == selectedProfileID }
+                    .let { profileIndex ->
+                        if (profileIndex == -1) {
+                            _lastSelectedIndex.value = 0
+                            profiles.first().id.let { profileId ->
+                                selectedProfileID = profileId
+                                Settings.selectedProfile = profileId
                             }
+                        }else{
+                            _lastSelectedIndex.value = profileIndex
                         }
-
-                    // _lastSelectedIndex.value = profiles.indexOfFirst { it.id == selectedProfileID }
-                }
+                    }
             }
         }
     }
@@ -176,10 +167,10 @@ class HomeViewModel: ViewModel() {
 
     suspend fun selectProfile(index:Int, profile: Profile, onRestart:suspend ()->Unit, onThrow: (Throwable)->Unit){
         selectedProfileID = profile.id
+        Settings.selectedProfile = profile.id
 
         _lastSelectedIndex.value = index
 
-        Settings.selectedProfile = profile.id
         val started = serviceStatus.value == Status.Started
         if (!started) {
             return
@@ -297,21 +288,6 @@ class HomeViewModel: ViewModel() {
                     _downlinkTotal.value = Libbox.formatBytes(status.downlinkTotal)
                 }
             }
-            // val binding = binding ?: return
-            // lifecycleScope.launch(Dispatchers.Main) {
-            //     binding.memoryText.text = Libbox.formatBytes(status.memory)
-            //     binding.goroutinesText.text = status.goroutines.toString()
-            //     val trafficAvailable = status.trafficAvailable
-            //     binding.trafficContainer.isVisible = trafficAvailable
-            //     if (trafficAvailable) {
-            //         binding.inboundConnectionsText.text = status.connectionsIn.toString()
-            //         binding.outboundConnectionsText.text = status.connectionsOut.toString()
-            //         binding.uplinkText.text = Libbox.formatBytes(status.uplink) + "/s"
-            //         binding.downlinkText.text = Libbox.formatBytes(status.downlink) + "/s"
-            //         binding.uplinkTotalText.text = Libbox.formatBytes(status.uplinkTotal)
-            //         binding.downlinkTotalText.text = Libbox.formatBytes(status.downlinkTotal)
-            //     }
-            // }
         }
 
     }
@@ -325,10 +301,10 @@ class HomeViewModel: ViewModel() {
 
         viewModelScope.launch {
             serviceStatus.collect{
-                XLog.e("收集服务状态：" + it.name)
+                XLog.i("收集服务状态：" + it.name)
                 when (it) {
                     Status.Started -> {
-                        XLog.e("开始链接")
+                        XLog.i("开始链接")
                         _initialStartup.value = true
                         _logList.value = emptyList()
                         statusClient.connect()
@@ -342,33 +318,33 @@ class HomeViewModel: ViewModel() {
     }
 
 
-    // inner class ClashModeClient : CommandClient.Handler {
-    //     override fun initializeClashMode(modeList: List<String>, currentMode: String) {
-    //         if (modeList.size > 1) {
-    //             viewModelScope.launch(Dispatchers.Main) {
-    //                 // binding.clashModeCard.isVisible = true
-    //                 // binding.clashModeList.adapter = ClashModeAdapter(modeList, currentMode)
-    //                 // binding.clashModeList.layoutManager =
-    //                 //     GridLayoutManager(
-    //                 //         requireContext(),
-    //                 //         if (modeList.size < 3) modeList.size else 3
-    //                 //     )
-    //             }
-    //         } else {
-    //             // lifecycleScope.launch(Dispatchers.Main) {
-    //             //     binding.clashModeCard.isVisible = false
-    //             // }
-    //         }
-    //     }
-    //
-    //     @SuppressLint("NotifyDataSetChanged")
-    //     override fun updateClashMode(newMode: String) {
-    //         val binding = binding ?: return
-    //         val adapter = binding.clashModeList.adapter as? OverviewFragment.ClashModeAdapter ?: return
-    //         adapter.selected = newMode
-    //         lifecycleScope.launch(Dispatchers.Main) {
-    //             adapter.notifyDataSetChanged()
-    //         }
-    //     }
-    // }
+    inner class ClashModeClient : CommandClient.Handler {
+        override fun initializeClashMode(modeList: List<String>, currentMode: String) {
+            if (modeList.size > 1) {
+                viewModelScope.launch(Dispatchers.Main) {
+                    // binding.clashModeCard.isVisible = true
+                    // binding.clashModeList.adapter = ClashModeAdapter(modeList, currentMode)
+                    // binding.clashModeList.layoutManager =
+                    //     GridLayoutManager(
+                    //         requireContext(),
+                    //         if (modeList.size < 3) modeList.size else 3
+                    //     )
+                }
+            } else {
+                // lifecycleScope.launch(Dispatchers.Main) {
+                //     binding.clashModeCard.isVisible = false
+                // }
+            }
+        }
+
+        // @SuppressLint("NotifyDataSetChanged")
+        // override fun updateClashMode(newMode: String) {
+        //     val binding = binding ?: return
+        //     val adapter = binding.clashModeList.adapter as? OverviewFragment.ClashModeAdapter ?: return
+        //     adapter.selected = newMode
+        //     lifecycleScope.launch(Dispatchers.Main) {
+        //         adapter.notifyDataSetChanged()
+        //     }
+        // }
+    }
 }

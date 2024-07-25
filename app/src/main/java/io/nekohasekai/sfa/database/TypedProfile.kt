@@ -14,7 +14,7 @@ class TypedProfile() : Parcelable {
 
         companion object {
             fun valueOf(value: Int): Type {
-                for (it in values()) {
+                for (it in entries) {
                     if (it.ordinal == value) {
                         return it
                     }

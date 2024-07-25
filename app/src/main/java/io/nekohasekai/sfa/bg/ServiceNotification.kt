@@ -29,7 +29,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 
 class ServiceNotification(
-    private val status: MutableLiveData<Status>, private val service: Service
+    private val status: MutableLiveData<Status>,
+    private val service: Service
 ) : BroadcastReceiver(), CommandClient.Handler {
     companion object {
         private const val notificationId = 1
@@ -46,13 +47,15 @@ class ServiceNotification(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private val commandClient =
-        CommandClient(GlobalScope, CommandClient.ConnectionType.Status, this)
+    private val commandClient = CommandClient(GlobalScope, CommandClient.ConnectionType.Status, this)
     private var receiverRegistered = false
 
     private val notificationBuilder by lazy {
-        NotificationCompat.Builder(service, notificationChannel).setShowWhen(false).setOngoing(true)
-            .setContentTitle(BuildConfig.applicationName).setOnlyAlertOnce(true)
+        NotificationCompat.Builder(service, notificationChannel)
+            .setShowWhen(false)
+            .setOngoing(true)
+            .setContentTitle(BuildConfig.applicationName)
+            .setOnlyAlertOnce(true)
             .setSmallIcon(R.drawable.ic_menu)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setContentIntent(
@@ -66,7 +69,8 @@ class ServiceNotification(
                     flags
                 )
             )
-            .setPriority(NotificationCompat.PRIORITY_LOW).apply {
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .apply {
                 addAction(
                     NotificationCompat.Action.Builder(
                         0, service.getText(R.string.stop), PendingIntent.getBroadcast(
@@ -84,13 +88,13 @@ class ServiceNotification(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             App.notification.createNotificationChannel(
                 NotificationChannel(
-                    notificationChannel, "sing-box service", NotificationManager.IMPORTANCE_LOW
+                    notificationChannel, "viaport service", NotificationManager.IMPORTANCE_LOW
                 )
             )
         }
         service.startForeground(
             notificationId, notificationBuilder
-                .setContentTitle(lastProfileName.takeIf { it.isNotBlank() } ?: "sing-box")
+                .setContentTitle(lastProfileName.takeIf { it.isNotBlank() } ?: "viaport")
                 .setContentText(service.getString(contentTextId)).build()
         )
     }
